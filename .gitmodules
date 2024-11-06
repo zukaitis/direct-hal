@@ -1,0 +1,6 @@
+[submodule "third_party/cmsis-device-u5"]
+	path = third_party/cmsis-device-u5
+	url = git@github.com:STMicroelectronics/cmsis-device-u5.git
+[submodule "third_party/cmsis-core"]
+	path = third_party/cmsis-core
+	url = git@github.com:STMicroelectronics/cmsis-core.git
