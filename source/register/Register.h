@@ -1,5 +1,11 @@
 #pragma once
 
+#if defined(STM32U5)
+#include "register/platform_specific/arm_cortex_m/RegisterInstructions.h"
+#else
+#error Platform unspecified or not supported
+#endif
+
 #include <array>
 #include <cstdint>
 #include <utility>
@@ -58,68 +64,6 @@ class SingleBit {
   uint32_t mask_;
 };
 
-class BitRange {
- public:
-  constexpr BitRange(Bit const high_bit, Bit const low_bit) :
-    bit_mask_ {((1U << (std::to_underlying(high_bit) - std::to_underlying(low_bit) + 1U)) - 1U) << std::to_underlying(low_bit)},
-    bit_shift_ {std::to_underlying(low_bit)}
-  {
-  }
-
-  virtual ~BitRange() = default;
-
-  constexpr inline uint32_t get_bit_mask() const {
-    return bit_mask_;
-  }
-
-  constexpr inline uint32_t get_bit_shift() const {
-    return bit_shift_;
-  }
-
- private:
-  uint32_t bit_mask_;
-  uint32_t bit_shift_;
-};
-
-class Register {
- public:
-  Register() = default;
-  virtual ~Register() = default;
-
-  inline void set_value(uint32_t const value) {
-    register_ = value;
-  }
-
-  inline uint32_t get_value() const {
-    return register_;
-  }
-
-  inline void set_bit(SingleBit const bit) {
-    register_ |= bit.get_mask();
-  }
-
-  inline void reset_bit(SingleBit const bit) {
-    register_ &= ~(bit.get_mask());
-  }
-
-  inline bool is_bit_set(SingleBit const bit) const {
-    return (0U != (register_ & bit.get_mask()));
-  }
-
-  inline void set_bit_range_value(BitRange const bit_range, uint32_t const value) {
-    uint32_t const clear_mask {~bit_range.get_bit_mask()};
-    uint32_t const shifted_value {(value << bit_range.get_bit_shift()) & bit_range.get_bit_mask()};
-    register_ = (register_ & clear_mask) | shifted_value;
-  }
-
-  inline uint32_t get_bit_range_value(BitRange const bit_range) const {
-    return (register_ & bit_range.get_bit_mask()) >> bit_range.get_bit_shift();
-  }
-
- private:
-  volatile uint32_t register_;
-};
-
 constexpr std::array<SingleBit, 32U> kSingleBit {
   SingleBit(Bit::k0),
   SingleBit(Bit::k1),
@@ -153,6 +97,30 @@ constexpr std::array<SingleBit, 32U> kSingleBit {
   SingleBit(Bit::k29),
   SingleBit(Bit::k30),
   SingleBit(Bit::k31),
+};
+
+
+class BitRange {
+ public:
+  constexpr BitRange(Bit const high_bit, Bit const low_bit) :
+    bit_mask_ {((1U << (std::to_underlying(high_bit) - std::to_underlying(low_bit) + 1U)) - 1U) << std::to_underlying(low_bit)},
+    bit_shift_ {std::to_underlying(low_bit)}
+  {
+  }
+
+  virtual ~BitRange() = default;
+
+  constexpr inline uint32_t get_bit_mask() const {
+    return bit_mask_;
+  }
+
+  constexpr inline uint32_t get_bit_shift() const {
+    return bit_shift_;
+  }
+
+ private:
+  uint32_t bit_mask_;
+  uint32_t bit_shift_;
 };
 
 constexpr std::array<BitRange, 16U> k2BitRange {
@@ -191,5 +159,56 @@ constexpr std::array<BitRange, 4U> k8BitRange {
   BitRange(Bit::k23, Bit::k16),
   BitRange(Bit::k31, Bit::k24),
 };
+
+
+class Register final {
+ public:
+
+  inline void set_value(uint32_t const value) {
+    register_ = value;
+  }
+
+  inline uint32_t get_value() const {
+    return register_;
+  }
+
+  inline void set_bit(SingleBit const bit) {
+    set_register_bit(register_, bit.get_mask());
+  }
+
+  inline void set_bit(Bit const bit) {
+    set_bit(kSingleBit[std::to_underlying(bit)]);
+  }
+
+  inline void reset_bit(SingleBit const bit) {
+    reset_register_bit(register_, bit.get_mask());
+  }
+
+  inline void reset_bit(Bit const bit) {
+    reset_bit(kSingleBit[std::to_underlying(bit)]);
+  }
+
+  inline bool is_bit_set(SingleBit const bit) const {
+    return (0U != (register_ & bit.get_mask()));
+  }
+
+  inline void set_bit_range_value(BitRange const bit_range, uint32_t const value) {
+    uint32_t const clear_mask {bit_range.get_bit_mask()};
+    uint32_t const shifted_value {(value << bit_range.get_bit_shift()) & bit_range.get_bit_mask()};
+    modify_register_value(register_, clear_mask, shifted_value);  
+  }
+
+  inline uint32_t get_bit_range_value(BitRange const bit_range) const {
+    return (register_ & bit_range.get_bit_mask()) >> bit_range.get_bit_shift();
+  }
+
+ private:
+  // Instances of this class shouldn't be created
+  Register() = default;
+  ~Register() = default;
+
+  uint32_t volatile register_;
+};
+
 
 }

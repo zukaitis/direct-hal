@@ -1,6 +1,8 @@
 
 add_library(DirectHal STATIC
+  source/gpio/GpioAlternateFunctionPin.cpp
   source/gpio/GpioInputPin.cpp
+  source/gpio/GpioOutputPin.cpp
 )
 
 target_include_directories(DirectHal PUBLIC

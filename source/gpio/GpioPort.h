@@ -8,8 +8,6 @@ namespace hal_impl {
 
 class GpioPort {
  public:
-  GpioPort() = default;
-  ~GpioPort() = default;
 
   inline void configure_pin_as_input(hal::GpioPin const pin) {
     configure_pin_mode(pin, GpioMode::kInput);
@@ -26,6 +24,31 @@ class GpioPort {
 
   inline void configure_pin_as_analog(hal::GpioPin const pin) {
     configure_pin_mode(pin, GpioMode::kAnalog);
+  }
+
+  inline void set_output_type(hal::GpioPin const pin, hal::OutputType const type) {
+    uint8_t const bit_index {std::to_underlying(pin)};
+    SingleBit const bit {kSingleBit[bit_index]};
+  
+    if (hal::OutputType::kPushPull == type) {
+      otyper_.reset_bit(bit);
+    } else {
+      otyper_.set_bit(bit);
+    }
+  }
+
+  inline void set_output_speed(hal::GpioPin const pin, hal::OutputSpeed const speed) {
+    uint8_t const range_index {std::to_underlying(pin)};
+    BitRange const bit_range {k2BitRange[range_index]};
+  
+    ospeedr_.set_bit_range_value(bit_range, std::to_underlying(speed));
+  }
+
+  inline void set_pupd(hal::GpioPin const pin, hal::Pupd const pupd) {
+    uint8_t const range_index {std::to_underlying(pin)};
+    BitRange const bit_range {k2BitRange[range_index]};
+  
+    pupdr_.set_bit_range_value(bit_range, std::to_underlying(pupd));
   }
 
   inline bool is_input_pin_high(hal::GpioPin const pin) {
@@ -45,6 +68,10 @@ class GpioPort {
   }
 
  private:
+  // Instances of this class shouldn't be created
+  GpioPort() = default;
+  ~GpioPort() = default;
+
   enum class GpioMode : uint8_t {
     kInput = 0U,
     kOutput = 1U,

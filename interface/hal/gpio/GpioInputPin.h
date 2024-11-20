@@ -15,10 +15,12 @@ class GpioInputPin {
 
   void configure() const;
 
+  void configure(Pupd const pupd_configuration) const;
+
   bool is_high() const;
  private:
-  GpioPort port_;
-  GpioPin pin_;
+  GpioPort const port_;
+  GpioPin const pin_;
 };
 
 }

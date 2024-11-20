@@ -15,6 +15,7 @@ enum class GpioPort : uint8_t {
   kH,
   kI,
   kJ,
+  kLpgpio,
 };
 
 enum class GpioPin : uint8_t {
@@ -53,6 +54,30 @@ enum class GpioAlternateFunction : uint8_t {
   k13,
   k14,
   k15,
+};
+
+enum class OutputType : uint8_t {
+  kPushPull = 0U,
+  kOpenDrain,
+};
+
+enum class OutputSpeed : uint8_t {
+  kLow = 0U,
+  kMedium,
+  kHigh,
+  kVeryHigh,
+};
+
+enum class Pupd : uint8_t {
+  kNoPull = 0U,
+  kPullUp,
+  kPullDown,
+};
+
+struct GpioOutputConfiguration {
+  OutputType output_type;
+  OutputSpeed output_speed;
+  Pupd pupd;
 };
 
 }
