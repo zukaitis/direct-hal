@@ -47,71 +47,68 @@ enum class Bit : uint8_t {
   k31,
 };
 
-class SingleBit {
+class Mask {
  public:
-  constexpr explicit SingleBit(Bit const bit) :
+  constexpr explicit Mask(uint32_t const mask) :
+    mask_ {mask}
+  {
+  }
+
+  constexpr explicit Mask(Bit const bit) :
     mask_ {1U << std::to_underlying(bit)}
   {
   }
-  
-  ~SingleBit() = default;
 
   constexpr inline uint32_t get_mask() const {
     return mask_;
   }
 
- private:
+ protected:
   uint32_t mask_;
 };
 
-constexpr std::array<SingleBit, 32U> kSingleBit {
-  SingleBit(Bit::k0),
-  SingleBit(Bit::k1),
-  SingleBit(Bit::k2),
-  SingleBit(Bit::k3),
-  SingleBit(Bit::k4),
-  SingleBit(Bit::k5),
-  SingleBit(Bit::k6),
-  SingleBit(Bit::k7),
-  SingleBit(Bit::k8),
-  SingleBit(Bit::k9),
-  SingleBit(Bit::k10),
-  SingleBit(Bit::k11),
-  SingleBit(Bit::k12),
-  SingleBit(Bit::k13),
-  SingleBit(Bit::k14),
-  SingleBit(Bit::k15),
-  SingleBit(Bit::k16),
-  SingleBit(Bit::k17),
-  SingleBit(Bit::k18),
-  SingleBit(Bit::k19),
-  SingleBit(Bit::k20),
-  SingleBit(Bit::k21),
-  SingleBit(Bit::k22),
-  SingleBit(Bit::k23),
-  SingleBit(Bit::k24),
-  SingleBit(Bit::k25),
-  SingleBit(Bit::k26),
-  SingleBit(Bit::k27),
-  SingleBit(Bit::k28),
-  SingleBit(Bit::k29),
-  SingleBit(Bit::k30),
-  SingleBit(Bit::k31),
+constexpr std::array<Mask, 32U> kSingleBit {
+  Mask(Bit::k0),
+  Mask(Bit::k1),
+  Mask(Bit::k2),
+  Mask(Bit::k3),
+  Mask(Bit::k4),
+  Mask(Bit::k5),
+  Mask(Bit::k6),
+  Mask(Bit::k7),
+  Mask(Bit::k8),
+  Mask(Bit::k9),
+  Mask(Bit::k10),
+  Mask(Bit::k11),
+  Mask(Bit::k12),
+  Mask(Bit::k13),
+  Mask(Bit::k14),
+  Mask(Bit::k15),
+  Mask(Bit::k16),
+  Mask(Bit::k17),
+  Mask(Bit::k18),
+  Mask(Bit::k19),
+  Mask(Bit::k20),
+  Mask(Bit::k21),
+  Mask(Bit::k22),
+  Mask(Bit::k23),
+  Mask(Bit::k24),
+  Mask(Bit::k25),
+  Mask(Bit::k26),
+  Mask(Bit::k27),
+  Mask(Bit::k28),
+  Mask(Bit::k29),
+  Mask(Bit::k30),
+  Mask(Bit::k31),
 };
 
 
-class BitRange {
+class BitRange : public Mask {
  public:
-  constexpr BitRange(Bit const high_bit, Bit const low_bit) :
-    bit_mask_ {((1U << (std::to_underlying(high_bit) - std::to_underlying(low_bit) + 1U)) - 1U) << std::to_underlying(low_bit)},
+  constexpr BitRange(Bit const low_bit, Bit const high_bit) :
+    Mask {((1U << (std::to_underlying(high_bit) - std::to_underlying(low_bit) + 1U)) - 1U) << std::to_underlying(low_bit)},
     bit_shift_ {std::to_underlying(low_bit)}
   {
-  }
-
-  virtual ~BitRange() = default;
-
-  constexpr inline uint32_t get_bit_mask() const {
-    return bit_mask_;
   }
 
   constexpr inline uint32_t get_bit_shift() const {
@@ -119,45 +116,44 @@ class BitRange {
   }
 
  private:
-  uint32_t bit_mask_;
   uint32_t bit_shift_;
 };
 
 constexpr std::array<BitRange, 16U> k2BitRange {
-  BitRange(Bit::k1, Bit::k0),
-  BitRange(Bit::k3, Bit::k2),
-  BitRange(Bit::k5, Bit::k4),
-  BitRange(Bit::k7, Bit::k6),
-  BitRange(Bit::k9, Bit::k8),
-  BitRange(Bit::k11, Bit::k10),
-  BitRange(Bit::k13, Bit::k12),
-  BitRange(Bit::k15, Bit::k14),
-  BitRange(Bit::k17, Bit::k16),
-  BitRange(Bit::k19, Bit::k18),
-  BitRange(Bit::k21, Bit::k20),
-  BitRange(Bit::k23, Bit::k22),
-  BitRange(Bit::k25, Bit::k24),
-  BitRange(Bit::k27, Bit::k26),
-  BitRange(Bit::k29, Bit::k28),
-  BitRange(Bit::k31, Bit::k30),
+  BitRange(Bit::k0, Bit::k1),
+  BitRange(Bit::k2, Bit::k3),
+  BitRange(Bit::k4, Bit::k5),
+  BitRange(Bit::k6, Bit::k7),
+  BitRange(Bit::k8, Bit::k9),
+  BitRange(Bit::k10, Bit::k11),
+  BitRange(Bit::k12, Bit::k13),
+  BitRange(Bit::k14, Bit::k15),
+  BitRange(Bit::k16, Bit::k17),
+  BitRange(Bit::k18, Bit::k19),
+  BitRange(Bit::k20, Bit::k21),
+  BitRange(Bit::k22, Bit::k23),
+  BitRange(Bit::k24, Bit::k25),
+  BitRange(Bit::k26, Bit::k27),
+  BitRange(Bit::k28, Bit::k29),
+  BitRange(Bit::k30, Bit::k31),
 };
 
 constexpr std::array<BitRange, 8U> k4BitRange {
-  BitRange(Bit::k3, Bit::k0),
-  BitRange(Bit::k7, Bit::k4),
-  BitRange(Bit::k11, Bit::k8),
-  BitRange(Bit::k15, Bit::k12),
-  BitRange(Bit::k19, Bit::k16),
-  BitRange(Bit::k23, Bit::k20),
-  BitRange(Bit::k27, Bit::k24),
-  BitRange(Bit::k31, Bit::k28),
+  BitRange(Bit::k0, Bit::k3),
+  BitRange(Bit::k4, Bit::k7),
+  BitRange(Bit::k8, Bit::k11),
+  BitRange(Bit::k12, Bit::k15),
+  BitRange(Bit::k16, Bit::k19),
+  BitRange(Bit::k20, Bit::k23),
+  BitRange(Bit::k24, Bit::k27),
+  BitRange(Bit::k28, Bit::k31),
 };
 
 constexpr std::array<BitRange, 4U> k8BitRange {
-  BitRange(Bit::k7, Bit::k0),
-  BitRange(Bit::k15, Bit::k8),
-  BitRange(Bit::k23, Bit::k16),
-  BitRange(Bit::k31, Bit::k24),
+  BitRange(Bit::k0, Bit::k7),
+  BitRange(Bit::k8, Bit::k15),
+  BitRange(Bit::k16, Bit::k23),
+  BitRange(Bit::k24, Bit::k31),
 };
 
 
@@ -172,34 +168,26 @@ class Register final {
     return register_;
   }
 
-  inline void set_bit(SingleBit const bit) {
-    set_register_bit(register_, bit.get_mask());
+  inline void set_bits(Mask const mask) {
+    // set_register_bit(register_, mask.get_mask());
   }
 
-  inline void set_bit(Bit const bit) {
-    set_bit(kSingleBit[std::to_underlying(bit)]);
+  inline void reset_bits(Mask const mask) {
+    reset_register_bit(register_, mask.get_mask());
   }
 
-  inline void reset_bit(SingleBit const bit) {
-    reset_register_bit(register_, bit.get_mask());
-  }
-
-  inline void reset_bit(Bit const bit) {
-    reset_bit(kSingleBit[std::to_underlying(bit)]);
-  }
-
-  inline bool is_bit_set(SingleBit const bit) const {
-    return (0U != (register_ & bit.get_mask()));
+  inline bool is_any_bit_set(Mask const mask) const {
+    return (0U != (register_ & mask.get_mask()));
   }
 
   inline void set_bit_range_value(BitRange const bit_range, uint32_t const value) {
-    uint32_t const clear_mask {bit_range.get_bit_mask()};
-    uint32_t const shifted_value {(value << bit_range.get_bit_shift()) & bit_range.get_bit_mask()};
+    uint32_t const clear_mask {bit_range.get_mask()};
+    uint32_t const shifted_value {(value << bit_range.get_bit_shift()) & bit_range.get_mask()};
     modify_register_value(register_, clear_mask, shifted_value);  
   }
 
   inline uint32_t get_bit_range_value(BitRange const bit_range) const {
-    return (register_ & bit_range.get_bit_mask()) >> bit_range.get_bit_shift();
+    return (register_ & bit_range.get_mask()) >> bit_range.get_bit_shift();
   }
 
  private:

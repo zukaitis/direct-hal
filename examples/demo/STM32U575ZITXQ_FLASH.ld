@@ -165,4 +165,7 @@ SECTIONS
   }
 
   .ARM.attributes 0 : { *(.ARM.attributes) }
+
+  .peripherals 0x42020000 (NOLOAD) : {KEEP(*(.ahb2))}
+
 }

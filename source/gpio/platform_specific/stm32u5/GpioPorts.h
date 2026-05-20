@@ -1,86 +1,94 @@
 #pragma once
 
-#include "gpio/GpioPort.h"
-#include "rcc/platform_specific/stm32u5/Rcc.h"
+#include "gpio/GpioPortRegisters.h"
+#include "hal/gpio/GpioConfiguration.h"
+#include "rcc/platform_specific/stm32u5/RccRegisters.h"
+
+// this should be surrounded by #ifdefs, depending on the specific microcontroller variant
+#include "Lqfp144.h"
+
+#include "RegisterSet.h"
 
 #include "stm32u5xx.h"
+
+#include <cstdint>
 
 namespace hal_impl {
 
 class GpioPorts final {
  public:
-  static GpioPort& get(hal::GpioPort const port) {
-    GpioPort* port_pointer {nullptr};
+  static inline constexpr RegisterSet<GpioPortRegisters> get(hal::GpioPort const port) {
+    uintptr_t address {0U};
     switch(port) {
       case hal::GpioPort::kA:
-        port_pointer = reinterpret_cast<GpioPort*>(GPIOA);
+        address = GPIOA_BASE_NS;
         break;
       case hal::GpioPort::kB:
-        port_pointer = reinterpret_cast<GpioPort*>(GPIOB);
+        address = GPIOB_BASE_NS;
         break;
       case hal::GpioPort::kC:
-        port_pointer = reinterpret_cast<GpioPort*>(GPIOC);
+        address = GPIOC_BASE_NS;
         break;
       case hal::GpioPort::kD:
-        port_pointer = reinterpret_cast<GpioPort*>(GPIOD);
+        address = GPIOD_BASE_NS;
         break;
       case hal::GpioPort::kE:
-        port_pointer = reinterpret_cast<GpioPort*>(GPIOE);
+        address = GPIOE_BASE_NS;
         break;
       case hal::GpioPort::kF:
-        port_pointer = reinterpret_cast<GpioPort*>(GPIOF);
+        address = GPIOF_BASE_NS;
         break;
       case hal::GpioPort::kG:
-        port_pointer = reinterpret_cast<GpioPort*>(GPIOG);
+        address = GPIOG_BASE_NS;
         break;
       case hal::GpioPort::kH:
-        port_pointer = reinterpret_cast<GpioPort*>(GPIOH);
+        address = GPIOH_BASE_NS;
         break;
       case hal::GpioPort::kI:
-        port_pointer = reinterpret_cast<GpioPort*>(GPIOI);
+        address = GPIOI_BASE_NS;
         break;
       case hal::GpioPort::kLpgpio:
-        port_pointer = reinterpret_cast<GpioPort*>(LPGPIO1);
+        address = LPGPIO1_BASE_NS;
         break;
       default:
         // TODO: throw an error
         break;
     }
-    return *port_pointer;
+    return RegisterSet<GpioPortRegisters>(address);
   }
 
   static void enable_peripheral_clock(hal::GpioPort const port) {
-    Rcc& rcc {Rcc::get()};
+    RccRegisters& rcc {RccRegisters::get()};
     switch(port) {
       case hal::GpioPort::kA:
-        rcc.ahb2enr1_.set_bit(Bit::k0);
+        rcc.ahb2enr1_.set_bits(Mask(Bit::k0));
         break;
       case hal::GpioPort::kB:
-        rcc.ahb2enr1_.set_bit(Bit::k1);
+        rcc.ahb2enr1_.set_bits(Mask(Bit::k1));
         break;
       case hal::GpioPort::kC:
-        rcc.ahb2enr1_.set_bit(Bit::k2);
+        rcc.ahb2enr1_.set_bits(Mask(Bit::k2));
         break;
       case hal::GpioPort::kD:
-        rcc.ahb2enr1_.set_bit(Bit::k3);
+        rcc.ahb2enr1_.set_bits(Mask(Bit::k3));
         break;
       case hal::GpioPort::kE:
-        rcc.ahb2enr1_.set_bit(Bit::k4);
+        rcc.ahb2enr1_.set_bits(Mask(Bit::k4));
         break;
       case hal::GpioPort::kF:
-        rcc.ahb2enr1_.set_bit(Bit::k5);
+        rcc.ahb2enr1_.set_bits(Mask(Bit::k5));
         break;
       case hal::GpioPort::kG:
-        rcc.ahb2enr1_.set_bit(Bit::k6);
+        rcc.ahb2enr1_.set_bits(Mask(Bit::k6));
         break;
       case hal::GpioPort::kH:
-        rcc.ahb2enr1_.set_bit(Bit::k7);
+        rcc.ahb2enr1_.set_bits(Mask(Bit::k7));
         break;
       case hal::GpioPort::kI:
-        rcc.ahb2enr1_.set_bit(Bit::k8);
+        rcc.ahb2enr1_.set_bits(Mask(Bit::k8));
         break;
       case hal::GpioPort::kLpgpio:
-        rcc.ahb3enr_.set_bit(Bit::k0);
+        rcc.ahb3enr_.set_bits(Mask(Bit::k0));
         break;
       default:
         // TODO: throw an error

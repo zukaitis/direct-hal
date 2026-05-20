@@ -6,7 +6,7 @@
 
 namespace hal_impl {
 
-class GpioPort {
+class GpioPortRegisters {
  public:
 
   inline void configure_pin_as_input(hal::GpioPin const pin) {
@@ -28,12 +28,12 @@ class GpioPort {
 
   inline void set_output_type(hal::GpioPin const pin, hal::OutputType const type) {
     uint8_t const bit_index {std::to_underlying(pin)};
-    SingleBit const bit {kSingleBit[bit_index]};
+    Mask const bit {kSingleBit[bit_index]};
   
     if (hal::OutputType::kPushPull == type) {
-      otyper_.reset_bit(bit);
+      otyper_.reset_bits(bit);
     } else {
-      otyper_.set_bit(bit);
+      otyper_.set_bits(bit);
     }
   }
 
@@ -52,25 +52,41 @@ class GpioPort {
   }
 
   inline bool is_input_pin_high(hal::GpioPin const pin) {
-    return idr_.is_bit_set(kSingleBit[std::to_underlying(pin)]);
+    return idr_.is_any_bit_set(kSingleBit[std::to_underlying(pin)]);
+  }
+
+  inline bool is_any_input_pin_high(Mask const pins) {
+    return idr_.is_any_bit_set(pins);
   }
 
   inline bool is_output_pin_high(hal::GpioPin const pin) {
-    return odr_.is_bit_set(kSingleBit[std::to_underlying(pin)]);
+    return odr_.is_any_bit_set(kSingleBit[std::to_underlying(pin)]);
+  }
+
+  inline bool is_any_output_pin_high(Mask const pins) {
+    return odr_.is_any_bit_set(pins);
   }
 
   inline void set_pin_high(hal::GpioPin const pin) {
     bsrr_.set_value(kSingleBit[std::to_underlying(pin)].get_mask());
   }
 
+  inline void set_pins_high(Mask const pins) {
+    bsrr_.set_value(pins.get_mask());
+  }
+
   inline void set_pin_low(hal::GpioPin const pin) {
     brr_.set_value(kSingleBit[std::to_underlying(pin)].get_mask());
   }
 
+  inline void set_pins_low(Mask const pins) {
+    brr_.set_value(pins.get_mask());
+  }
+
  private:
   // Instances of this class shouldn't be created
-  GpioPort() = default;
-  ~GpioPort() = default;
+  GpioPortRegisters() = default;
+  ~GpioPortRegisters() = default;
 
   enum class GpioMode : uint8_t {
     kInput = 0U,
@@ -107,6 +123,7 @@ class GpioPort {
   Register brr_;
   Register hslvr_;
   Register seccfgr_;
+  std::array<uint32_t, 243> padding_;  // Register is 1K wide in memory
 };
 
 }
