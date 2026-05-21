@@ -33,6 +33,8 @@ class GpioOutputPin {
   void set_high() const;
 
   void set_low() const;
+
+  void toggle() const;
  private:
   hal_impl::RegisterSet<hal_impl::GpioPortRegisters> port_registers_;
   hal_impl::Mask pin_mask_;

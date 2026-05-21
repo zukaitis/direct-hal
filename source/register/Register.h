@@ -169,11 +169,11 @@ class Register final {
   }
 
   inline void set_bits(Mask const mask) {
-    // set_register_bit(register_, mask.get_mask());
+    set_register_bits(register_, mask.get_mask());
   }
 
   inline void reset_bits(Mask const mask) {
-    reset_register_bit(register_, mask.get_mask());
+    reset_register_bits(register_, mask.get_mask());
   }
 
   inline bool is_any_bit_set(Mask const mask) const {

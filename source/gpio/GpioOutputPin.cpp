@@ -28,4 +28,12 @@ void GpioOutputPin::set_low() const {
   port_registers_->set_pins_low(pin_mask_);
 }
 
+void GpioOutputPin::toggle() const {
+  if (is_high()) {
+    set_low();
+  } else {
+    set_high();
+  }
+}
+
 }

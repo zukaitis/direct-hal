@@ -6,18 +6,18 @@ extern "C" {
 
 namespace hal_impl {
 
-inline void set_register_bit(uint32_t volatile& reg, uint32_t const bit_mask) {
+inline void set_register_bits(uint32_t volatile& reg, uint32_t const bit_mask) {
   bool success {false};
   while (not success) {
-    uint32_t const value = __LDREXW(&reg) | bit_mask;
+    uint32_t const value {__LDREXW(&reg) | bit_mask};
     success = (0U == __STREXW(value, &reg));
   }
 }
 
-inline void reset_register_bit(uint32_t volatile& reg, uint32_t const bit_mask) {
+inline void reset_register_bits(uint32_t volatile& reg, uint32_t const bit_mask) {
   bool success {false};
   while (not success) {
-    uint32_t const value = __LDREXW(&reg) & (~bit_mask);
+    uint32_t const value {__LDREXW(&reg) & (~bit_mask)};
     success = (0U == __STREXW(value, &reg));
   }
 }
