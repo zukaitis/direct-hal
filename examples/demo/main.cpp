@@ -20,6 +20,6 @@ int main() {
 extern "C" void SystemInit (void)
 {
 #if defined (__VTOR_PRESENT) && (__VTOR_PRESENT == 1U)
-  SCB->VTOR = (uint32_t) &(__VECTOR_TABLE[0]);
+  // SCB->VTOR = (uint32_t) &(__VECTOR_TABLE[0]);
 #endif
 }

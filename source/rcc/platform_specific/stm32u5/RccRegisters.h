@@ -6,11 +6,11 @@
 
 namespace hal_impl {
 
-class Rcc final {
+class RccRegisters final {
  public:
 
-  static inline Rcc& get() {
-    return *reinterpret_cast<Rcc*>(RCC);
+  static inline RccRegisters& get() {
+    return *reinterpret_cast<RccRegisters*>(RCC);
   }
 
   Register cr_;
@@ -81,8 +81,8 @@ class Rcc final {
 
  private:
   // Instances of this class shouldn't be created
-  Rcc() = default;
-  ~Rcc() = default;
+  RccRegisters() = default;
+  ~RccRegisters() = default;
 
 };
 

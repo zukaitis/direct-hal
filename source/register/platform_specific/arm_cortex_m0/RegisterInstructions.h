@@ -2,11 +2,11 @@
 
 namespace hal_impl {
 
-inline void set_register_bit(uint32_t volatile& reg, uint32_t const bit_mask) {
+inline void set_register_bits(uint32_t volatile& reg, uint32_t const bit_mask) {
   reg |= bit_mask;
 }
 
-inline void reset_register_bit(uint32_t volatile& reg, uint32_t const bit_mask) {
+inline void reset_register_bits(uint32_t volatile& reg, uint32_t const bit_mask) {
   reg &= (~bit_mask);
 }
 

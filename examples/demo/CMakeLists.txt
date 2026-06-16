@@ -11,6 +11,8 @@ set(CMAKE_SIZE arm-none-eabi-size)
 
 set(CMAKE_CXX_STANDARD 23)
 
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
 set(arch_flags
   -mcpu=cortex-m33
   -mfpu=auto

@@ -9,7 +9,7 @@ target_include_directories(DirectHal PUBLIC
   interface
 )
 
-target_include_directories(DirectHal PRIVATE
+target_include_directories(DirectHal PUBLIC
   source
   source/configuration
   third_party/cmsis-core/Include
